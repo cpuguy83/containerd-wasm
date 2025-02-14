@@ -125,6 +125,9 @@ jobs:
         with:
           rustflags: '' #Disable.  By default this action sets environment variable is set to -D warnings.  We manage this in the Makefile
       - uses: ./.github/actions/setup-env
+      - name: Setup build profile
+        shell: bash
+        run: echo "OPT_PROFILE=release" >> ${GITHUB_ENV}
       - uses: ./.github/actions/build
       - name: Run Stress Tests
         shell: bash
@@ -139,7 +142,7 @@ jobs:
               STRESS_TEST_IMAGE=ghcr.io/containerd/runwasi/wasi-demo-app:latest
             
             # Run non-containerd stress test
-            make test/stress-$RUNTIME \
+            make OPT_PROFILE=release test/stress-$RUNTIME \
               STRESS_TEST_COUNT=1000 \
               STRESS_TEST_TIMEOUT=10s \
               STRESS_TEST_JSON=stress-bench-$RUNTIME.json \
