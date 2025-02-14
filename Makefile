@@ -72,7 +72,7 @@ export
 STRESS_TEST_COUNT ?= 100
 STRESS_TEST_PARALLEL ?= $$(nproc || echo 10)
 STRESS_TEST_TIMEOUT ?= 5s
-STRESS_TEST_IMAGE ?= ghcr.io/containerd/runwasi/wasi-demo-oci:latest
+STRESS_TEST_IMAGE ?= ghcr.io/containerd/runwasi/wasi-demo-app:latest
 STRESS_TEST_JSON ?= 
 STRESS_TEST_JSON_FLAG = $(if $(STRESS_TEST_JSON),--json-output $(STRESS_TEST_JSON),)
 

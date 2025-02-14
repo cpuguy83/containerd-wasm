@@ -114,6 +114,7 @@ async fn main_impl() -> Result<()> {
 
 async fn run_stress_test(cli: Cli, c8d: impl Containerd) -> Result<()> {
     let Cli {
+        containerd,
         shim: shim_path,
         container_output,
         parallel,
@@ -254,10 +255,15 @@ async fn run_stress_test(cli: Cli, c8d: impl Containerd) -> Result<()> {
         .map(|m| m.as_str())
         .unwrap_or("wasmtime");
 
+    let containerd_shim = if containerd { "containerd" } else { "mock" };
+
     if let Some(json_output) = json_output {
         let results = vec![
             BenchmarkResult {
-                name: format!("Stress Test Tasks Throughput - {}", shim),
+                name: format!(
+                    "Stress Test Tasks Throughput with {} service - {}",
+                    containerd_shim, shim
+                ),
                 unit: "tasks/s".to_string(),
                 value: throuput,
                 extra: Some(format!(
@@ -266,7 +272,10 @@ async fn run_stress_test(cli: Cli, c8d: impl Containerd) -> Result<()> {
                 )),
             },
             BenchmarkResult {
-                name: format!("Stress Test Tasks Elapsed Time - {}", shim),
+                name: format!(
+                    "Stress Test Tasks Elapsed Time with {} service - {}",
+                    containerd_shim, shim
+                ),
                 unit: "s".to_string(),
                 value: elapsed.as_secs_f64(),
                 extra: Some(format!(
@@ -275,7 +284,10 @@ async fn run_stress_test(cli: Cli, c8d: impl Containerd) -> Result<()> {
                 )),
             },
             BenchmarkResult {
-                name: format!("Stress Test Tasks Setup Time - {}", shim),
+                name: format!(
+                    "Stress Test Tasks Setup Time with {} service - {}",
+                    containerd_shim, shim
+                ),
                 unit: "s".to_string(),
                 value: setup_start.elapsed().as_secs_f64(),
                 extra: Some(format!(

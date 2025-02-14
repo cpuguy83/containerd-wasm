@@ -131,11 +131,19 @@ jobs:
         run: |
           set -euxo pipefail
           for RUNTIME in wasmtime wasmedge wasmer wamr; do
+            # Run containerd stress test
             make test/stress-c8d-$RUNTIME \
               STRESS_TEST_COUNT=1000 \
               STRESS_TEST_TIMEOUT=10s \
+              STRESS_TEST_JSON=stress-bench-c8d-$RUNTIME.json \
+              STRESS_TEST_IMAGE=ghcr.io/containerd/runwasi/wasi-demo-app:latest
+            
+            # Run non-containerd stress test
+            make test/stress-$RUNTIME \
+              STRESS_TEST_COUNT=1000 \
+              STRESS_TEST_TIMEOUT=10s \
               STRESS_TEST_JSON=stress-bench-$RUNTIME.json \
-              STRESS_TEST_IMAGE=ghcr.io/containerd/runwasi/wasi-demo-oci:latest
+              STRESS_TEST_IMAGE=ghcr.io/containerd/runwasi/wasi-demo-app:latest
           done
           cat stress-bench-*.json | jq -s 'flatten(1)' > stress-bench.json
       - name: Store benchmark result
